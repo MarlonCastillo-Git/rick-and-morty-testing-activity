@@ -17,7 +17,7 @@ export default function Error({
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
       <h2 className="text-2xl font-bold mb-4 text-red-500">Something went wrong!</h2>
       <p className="text-gray-400 mb-6 text-center max-w-md">
-        We couldn't load the characters. Please try again later.
+        We couldn&apos;t load the characters. Please try again later.
       </p>
       <button
         onClick={

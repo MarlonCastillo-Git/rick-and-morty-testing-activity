@@ -1,79 +1,104 @@
-# Rick and Morty Explorer 🧪
+# Tarea de Marlon Castillo Rivas - Domingo 25 OCT 
+# Garantizar la calidad y estabilidad del software mediante pruebas automatizadas
+# Rick and Morty Explorer
 
-Una aplicación web moderna para explorar el universo de Rick and Morty, construida con Next.js 15, React 19 y Tailwind CSS v4.
+Aplicación Next.js 16 (App Router), React 19, TypeScript y Tailwind CSS 4 para explorar personajes y episodios de Rick and Morty. Incluye catálogo paginado, detalle de personaje, estados de carga y recuperación de errores.
 
-## 🚀 Características
+## Instalación y ejecución
 
-- **Exploración de Personajes**: Navega a través de todos los personajes de la serie con una interfaz de cuadrícula responsive.
-- **Detalle de Personaje**: Información detallada de cada personaje, incluyendo origen, ubicación y episodios.
-- **Paginación**: Navegación fluida entre páginas de resultados.
-- **Diseño Responsive**: Optimizado para móviles, tablets y escritorio.
-- **Modo Oscuro**: Interfaz oscura por defecto con estética acorde a la serie.
-- **Server-Side Rendering (SSR)**: Carga rápida y SEO optimizado gracias a Next.js App Router.
+Requisitos: Node.js 24 o posterior y pnpm (lockfile generado con pnpm 12.3.4). Se recomienda una versión LTS de Node compatible. No requiere variables de entorno ni credenciales; la API pública está definida en `src/lib/api.ts`.
 
-## 🛠️ Tecnologías
+```bash
+cd /Users/marloncastillo/rick-and-morty-testing-activity
+pnpm install --frozen-lockfile
+pnpm dev
+```
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Biblioteca UI**: [React 19](https://react.dev/)
-- **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **API**: [The Rick and Morty API](https://rickandmortyapi.com/)
-- **Tipado**: TypeScript
+Abrir http://localhost:3000. El catálogo usa `/?page=2` y los detalles `/character/1`.
 
-## 📦 Instalación y Ejecución Local
+```bash
+pnpm build
+pnpm start
+```
 
-1.  **Clonar el repositorio** (o descargar el código):
-    ```bash
-    git clone <tu-repositorio>
-    cd my-app
-    ```
+La aplicación requiere acceso a Rick and Morty API; el build puede necesitar conexión para las fuentes de Google. Las pruebas no requieren servicios externos.
 
-2.  **Instalar dependencias**:
-    ```bash
-    npm install
-    # o
-    pnpm install
-    # o
-    yarn install
-    ```
+## Ejecutar las pruebas
 
-3.  **Ejecutar el servidor de desarrollo**:
-    ```bash
-    npm run dev
-    # o
-    pnpm dev
-    # o
-    yarn dev
-    ```
+```bash
+pnpm test                 # modo interactivo
+pnpm test:run             # una ejecución
+pnpm exec vitest run --coverage
+# equivalente:
+pnpm test:coverage
+```
 
-4.  Abrir [http://localhost:3000](http://localhost:3000) en tu navegador.
+`vitest.config.ts` configura jsdom, el alias `@`, el setup y cobertura V8. Los umbrales de Statements, Branches, Functions y Lines son 80 %, globalmente y por archivo. Una prueba fallida o una métrica inferior hace fallar el comando.
 
-## 🚀 Despliegue
+Se incluyen todos los archivos ejecutables `src/**/*.ts` y `src/**/*.tsx`, aunque no sean importados por una prueba. Solo se excluyen declaraciones e interfaces de `src/types`, que no generan código ejecutable. CSS, imágenes, configuración y tests no forman parte del denominador. No se excluyen páginas, layout ni estados de error para aumentar la cobertura.
 
-La forma más sencilla de desplegar esta aplicación es utilizando [Vercel](https://vercel.com/new).
+## Suites
 
-1.  Sube tu código a un repositorio de GitHub, GitLab o Bitbucket.
-2.  Importa el proyecto en Vercel.
-3.  Vercel detectará automáticamente que es un proyecto Next.js.
-4.  Haz clic en **Deploy**.
+- `tests/api.test.ts`: solicitudes, página predeterminada y explícita, errores HTTP, de red y JSON; lista vacía de episodios sin fetch y normalización de uno o varios episodios.
+- `tests/utils.test.ts`: validación de parámetros de página, extracción de identificadores y formato de fechas en UTC, con entradas inválidas y límites.
+- `tests/components.test.tsx`: información y enlaces de tarjetas, estados, extremos de paginación, carga accesible y botón de recuperación.
+- `tests/pages.test.tsx`: composición del catálogo y detalle, propagación de errores, episodios, layout, navegación y metadata.
+- `tests/setup.ts`: matchers DOM, limpieza entre pruebas, bloqueo de fetch no simulado y mock de fuentes de Next.
+- `tests/fixtures.ts`: datos estáticos tipados y reproducibles.
 
-## 📂 Estructura del Proyecto
+Se usan React Testing Library y user-event, priorizando roles, textos, enlaces e interacción. Los mocks se limitan a fronteras externas (fetch, API y fuentes); las utilidades y los componentes reales se ejecutan. No hay llamadas a la API real ni snapshots masivos.
 
-- `src/app`: Rutas de la aplicación (App Router).
-  - `page.tsx`: Página principal (lista de personajes).
-  - `character/[id]/page.tsx`: Página de detalle de personaje.
-  - `loading.tsx` / `error.tsx`: Estados de carga y error.
-  - `layout.tsx`: Layout principal con Header y Footer.
-- `src/components`: Componentes reutilizables (`CharacterCard`, `Pagination`).
-- `src/lib`: Lógica de cliente API (`api.ts`).
-- `src/types`: Definiciones de tipos TypeScript (`rickandmorty.ts`).
+Las páginas async se invocan y esperan explícitamente antes de renderizar su resultado. Esto prueba la orquestación del servidor y la composición React; no emula el transporte RSC, hidratación, router de Next ni un navegador real. Esta entrega cubre la base unitaria y algunas pruebas de integración de la pirámide; no incluye E2E. Un 100 % de cobertura no garantiza ausencia de defectos.
 
-## ✅ Requisitos Cumplidos
+## Reportes y evidencia
 
-- [x] Consumo de API de Personajes.
-- [x] Vista de cuadrícula con imagen, nombre, estado y especie.
-- [x] Paginación.
-- [x] Vista de detalle con información completa.
-- [x] Lista de episodios en la vista de detalle.
-- [x] Enrutamiento cliente-servidor (Next.js).
-- [x] Diseño Responsive.
-- [x] Loading states y manejo de errores.
+Resultado de la ejecución del 25 de octubre de 2026: **53 pruebas aprobadas en 4 suites**.
+
+| Archivo | Statements | Branches | Functions | Lines |
+| --- | ---: | ---: | ---: | ---: |
+| src/app/error.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/app/layout.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/app/loading.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/app/page.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/app/character/[id]/page.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/components/CharacterCard.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/components/Pagination.tsx | 100 % | 100 % | 100 % | 100 % |
+| src/lib/api.ts | 100 % | 100 % | 100 % | 100 % |
+| src/lib/utils.ts | 100 % | 100 % | 100 % | 100 % |
+| **Global** | **100 %** | **100 %** | **100 %** | **100 %** |
+
+Contadores globales: 54/54 statements, 39/39 branches, 19/19 functions, 50/50 líneas ejecutables.
+
+- `coverage/index.html`: reporte HTML navegable, con desglose por archivo y líneas.
+- `coverage/coverage-summary.json`: datos de cobertura procesables.
+- `coverage/lcov.info`: formato interoperable para herramientas de CI.
+- `coverage/console-summary.txt`: salida de consola de la ejecución entregada.
+- `evidence/coverage-console.txt`: copia de evidencia que sobrevive a la limpieza automática de `coverage/`.
+
+Abrir el reporte en macOS:
+
+```bash
+open coverage/index.html
+```
+
+`coverage/` se incluye intencionalmente en el repositorio como entregable, pero se excluye del lint porque es código generado. Al volver a ejecutar Vitest, la carpeta se regenera. Para actualizar también la evidencia, ejecutar en Bash:
+
+```bash
+set -o pipefail
+pnpm exec vitest run --coverage 2>&1 | tee evidence/coverage-console.txt
+# Solo si el comando anterior termina correctamente:
+cp evidence/coverage-console.txt coverage/console-summary.txt
+```
+
+## Ajustes funcionales
+
+`src/lib/utils.ts` centraliza la lógica reutilizable. El catálogo usa `parsePage` para evitar páginas negativas, decimales, NaN o números inseguros. El detalle reutiliza extracción de episodios y fechas UTC para evitar cambios de día según la zona horaria. El estado de carga expone un rol accesible. Se corrigió el apóstrofo JSX del mensaje de error.
+
+Los valores incompletos de `allowBuilds` en `pnpm-workspace.yaml` se sustituyeron por `false`, conservando deshabilitados los scripts de sharp y unrs-resolver. Las dependencias de testing se registran en package.json y pnpm-lock.yaml. El proyecto usa módulos ESM y tipos de Node 24 compatibles con Vitest 5.
+
+## Comprobaciones adicionales
+
+```bash
+pnpm exec tsc --noEmit
+pnpm lint
+```

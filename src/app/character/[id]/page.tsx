@@ -1,3 +1,4 @@
+import { getEpisodeIds, formatCreatedDate } from '@/lib/utils';
 import { getCharacter, getEpisodes } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,18 +11,11 @@ export default async function CharacterPage({
   const { id } = await params;
   const character = await getCharacter(id);
   
-  const episodeIds = character.episode.map((url) => {
-    const parts = url.split('/');
-    return parts[parts.length - 1];
-  });
-  
+  const episodeIds = getEpisodeIds(character.episode);
+
   const episodes = await getEpisodes(episodeIds);
 
-  const formattedDate = new Date(character.created).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = formatCreatedDate(character.created);
 
   return (
     <div className="container mx-auto px-4 py-8">

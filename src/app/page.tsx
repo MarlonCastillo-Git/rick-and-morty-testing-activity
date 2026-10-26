@@ -1,3 +1,4 @@
+import { parsePage } from '@/lib/utils';
 import { getCharacters } from '@/lib/api';
 import CharacterCard from '@/components/CharacterCard';
 import Pagination from '@/components/Pagination';
@@ -8,7 +9,7 @@ export default async function Home({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const resolvedSearchParams = await searchParams;
-  const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1;
+  const page = parsePage(resolvedSearchParams.page);
   const data = await getCharacters(page);
 
   return (

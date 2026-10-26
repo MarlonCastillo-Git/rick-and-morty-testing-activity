@@ -11,7 +11,7 @@
 !.yarn/versions
 
 # testing
-/coverage
+# coverage/ is intentionally versioned for the activity
 
 # next.js
 /.next/
